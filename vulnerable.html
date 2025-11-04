@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Vulnerable (file mode) — Unsafe Echo</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body { font-family: system-ui, Arial; padding: 1rem; background:#f9f9f9; }
+    .box { max-width:720px; margin:0 auto; background:white; padding:1rem; border-radius:6px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+    label, button { display:block; margin-top:.5rem; }
+    #output { margin-top:1rem; padding:.5rem; border:1px solid #ddd; min-height:2rem; background:#fff; }
+    #notice { margin-top:.5rem; color:#b00020; font-weight:600; }
+    small { color:#666; }
+    pre.example { background:#f3f3f3; padding:.5rem; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Vulnerable Demo — Unsafe Rendering</h2>
+    <p><small>This page intentionally echoes submitted comments as HTML to demonstrate why unescaped input can be dangerous. Open directly in your browser (file://). Use only in a sandbox.</small></p>
+
+    <form id="commentForm" onsubmit="return submitComment();">
+      <label for="comment">Enter comment (paste a test input):</label>
+      <textarea id="comment" rows="4" cols="60" placeholder="Type or paste here..."></textarea>
+      <button type="submit">Submit</button>
+    </form>
+
+    <div id="output" aria-live="polite"></div>
+    <div id="notice" aria-live="polite"></div>
+
+    <h4>Example test inputs</h4>
+    <pre class="example">&lt;b&gt;INJECTED: bold text&lt;/b&gt;</pre>
+    <pre class="example">&lt;img src="x" onerror="document.getElementById('notice').textContent='INJECTED via onerror'"&gt;</pre>
+    <pre class="example">&lt;a href="javascript:console.log('JS link')"&gt;JS LINK&lt;/a&gt;</pre>
+  </div>
+
+  <script>
+    // Unsafe: directly writes user input as HTML
+    function submitComment() {
+      var txt = document.getElementById('comment').value || '';
+      // show raw HTML in the output area (unsafe)
+      document.getElementById('output').innerHTML = txt;
+
+      // Provide a little visible log so students can see change
+      console.log('VULNERABLE: inserted HTML:', txt);
+      return false; // prevent real form submission/navigation
+    }
+
+    // Expose for console testing if needed
+    window.submitComment = submitComment;
+  </script>
+</body>
+</html>
+

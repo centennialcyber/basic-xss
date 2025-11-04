@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Hardened (file mode) — Escaped Output</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body { font-family: system-ui, Arial; padding: 1rem; background:#f6fffa; }
+    .box { max-width:720px; margin:0 auto; background:white; padding:1rem; border-radius:6px; box-shadow:0 1px 4px rgba(0,0,0,.06); }
+    label, button { display:block; margin-top:.5rem; }
+    #output { margin-top:1rem; padding:.5rem; border:1px solid #ddd; min-height:2rem; background:#fff; white-space:pre-wrap; }
+    #note { margin-top:.5rem; color:#066; font-weight:600; }
+    small { color:#666; }
+    pre.example { background:#f3f3f3; padding:.5rem; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Hardened Demo — Escaped Output</h2>
+    <p><small>This page safely displays submitted comments as text. It escapes special characters so markup and event handlers will not run. Open directly in your browser (file://).</small></p>
+
+    <form id="commentForm" onsubmit="return submitComment();">
+      <label for="comment">Enter comment (paste a test input):</label>
+      <textarea id="comment" rows="4" cols="60" placeholder="Type or paste here..."></textarea>
+      <button type="submit">Submit</button>
+    </form>
+
+    <div id="output" aria-live="polite"></div>
+    <div id="note" aria-live="polite"></div>
+
+    <h4>Example test inputs</h4>
+    <pre class="example">&lt;b&gt;INJECTED: bold text&lt;/b&gt;</pre>
+    <pre class="example">&lt;img src="x" onerror="document.getElementById('notice').textContent='INJECTED via onerror'"&gt;</pre>
+    <pre class="example">&lt;a href="javascript:console.log('JS link')"&gt;JS LINK&lt;/a&gt;</pre>
+  </div>
+
+  <script>
+    // Small helper to escape characters commonly used in HTML
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function submitComment() {
+      var txt = document.getElementById('comment').value || '';
+      // SAFE: escape input and set as text content so markup does not execute
+      document.getElementById('output').textContent = escapeHtml(txt);
+      document.getElementById('note').textContent = 'Input displayed safely (escaped).';
+      console.log('HARDENED: escaped output shown:', txt);
+      return false;
+    }
+
+    // Expose for console testing
+    window.submitComment = submitComment;
+  </script>
+</body>
+</html>
+
